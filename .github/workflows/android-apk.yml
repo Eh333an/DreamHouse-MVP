@@ -35,7 +35,6 @@ jobs:
         with:
           projectPath: ${{ env.UNITY_PROJECT_PATH }}
           targetPlatform: Android
-          buildMethod: DreamHouse.Editor.DreamHouseCloudBuildSetup.BuildAndroid
           androidAppBundle: false
           allowDirtyBuild: true
 
