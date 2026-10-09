@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Extract Unity project archive
         shell: bash
@@ -20,11 +22,12 @@ jobs:
           set -euo pipefail
           ARCHIVE="DreamHouse_CloudBuild_Prep.zip"
           test -f "$ARCHIVE" || { echo "Missing $ARCHIVE"; exit 1; }
-          mkdir -p "$RUNNER_TEMP/dreamhouse-project"
-          unzip -q "$ARCHIVE" -d "$RUNNER_TEMP/dreamhouse-project"
-          test -d "$RUNNER_TEMP/dreamhouse-project/DreamHouse/Assets"
-          test -f "$RUNNER_TEMP/dreamhouse-project/DreamHouse/ProjectSettings/ProjectVersion.txt"
-          echo "UNITY_PROJECT_PATH=$RUNNER_TEMP/dreamhouse-project/DreamHouse" >> "$GITHUB_ENV"
+          PROJECT_ROOT="$GITHUB_WORKSPACE/.build/dreamhouse-project"
+          mkdir -p "$PROJECT_ROOT"
+          unzip -q "$ARCHIVE" -d "$PROJECT_ROOT"
+          test -d "$PROJECT_ROOT/DreamHouse/Assets"
+          test -f "$PROJECT_ROOT/DreamHouse/ProjectSettings/ProjectVersion.txt"
+          echo "UNITY_PROJECT_PATH=$PROJECT_ROOT/DreamHouse" >> "$GITHUB_ENV"
 
       - name: Build APK with Unity
         uses: game-ci/unity-builder@v4
@@ -43,6 +46,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DreamHouse-Android-APK
-          path: build/Android/**/*.apk
+          path: |
+            .build/dreamhouse-project/DreamHouse/build/Android/**/*.apk
+            build/Android/**/*.apk
           if-no-files-found: error
           retention-days: 14
