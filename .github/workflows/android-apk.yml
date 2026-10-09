@@ -34,8 +34,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ env.UNITY_PROJECT_PATH }}
+          unityVersion: 2022.3.20f1
           targetPlatform: Android
-          androidAppBundle: false
           allowDirtyBuild: true
 
       - name: Upload APK artifact
